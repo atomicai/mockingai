@@ -10,7 +10,11 @@ from tgbot.utils.generate_image import generate_dashboard
 @dp.message_handler(commands=['start'])
 async def start(message: types.Message):
     tg_id = message.from_user.id
-    await message.answer("<b>Доброго времени суток!</b>", reply_markup=get_menu(tg_id))
+    await message.answer("<b>Привет! Я бот, который поможет тебе анализировать категории на рентабельность. "
+                         "Просто отправь мне список твоих категорий и я помогу тебе определить, "
+                         "какие из них приносят наибольшую прибыль, а какие нуждаются в улучшении. "
+                         "Я был создан, чтобы сделать твой бизнес более прибыльным и эффективным. "
+                         "Начнем работу!</b>", reply_markup=get_menu(tg_id))
 
 
 @dp.message_handler(commands=['help'])
