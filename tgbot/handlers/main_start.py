@@ -1,10 +1,12 @@
 from aiogram import types
+from aiogram.dispatcher import FSMContext
 
 from tgbot.methods.config import help_text
 from tgbot.keyboards.default import get_menu
 from tgbot.keyboards.inline import select_category
 from tgbot.loader import dp, bot
 from tgbot.utils.generate_image import generate_dashboard
+from tgbot.states.state_users import UserState
 
 
 @dp.message_handler(commands=['start'])
@@ -35,15 +37,22 @@ async def process_callback(callback_query: types.CallbackQuery):
 
 
 async def _analyze_product(message: types.Message):
-    products = {"Ремонт", "Электроника", 'Бла бла'}
+    products = {"Ремонт", "Электроника", 'Бла бла'}  # TODO: model
     await message.answer('Выберите категорию товара', reply_markup=select_category(products))
+
+
+@dp.message_handler(state=UserState.word)
+async def change_subgroup(message: types.Message, state: FSMContext):
+    await _analyze_product(message)
+    await state.finish()
 
 
 @dp.message_handler(chat_type=[types.ChatType.PRIVATE])
 async def bot_message(message: types.Message):
     match message.text:
         case 'Анализировать товар':
-            await _analyze_product(message)
+            await message.answer("Напишите название товара или категории, в которой вы планируете работать")
+            await UserState.word.set()
         case 'Профиль':
             await message.answer('Ваша статистика доступна по ссылке: ')
         case _:
